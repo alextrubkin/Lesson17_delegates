@@ -1,12 +1,12 @@
 ﻿
 namespace HomeWork17.Figures
 {
-    public class Triangle : BaseFigure
+    public class Triangle : Square
     {
         private double _triangleBase;
         private double _leftSide;
         private double _rightSide;
-        public Triangle(double triangleBase, double leftSide, double rightSide)
+        public Triangle(double triangleBase, double leftSide, double rightSide, double height):base(height)
         {
             TriangleBase = triangleBase;
             LeftSide = leftSide;
@@ -52,7 +52,7 @@ namespace HomeWork17.Figures
         public override TypeOfFigure TypeOfFigure => TypeOfFigure.triangle;
         public override void GetArea()
         {
-            Area = TriangleBase * TriangleBase / 2;
+            Area = TriangleBase * Height / 2;
         }
 
         public override void GetPerimetr()

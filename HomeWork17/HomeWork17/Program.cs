@@ -14,7 +14,7 @@ namespace HomeWork17
             var square = new Square(10);
             var circle = new Circle(12);
             var rectangle = new Rectangle(5, 10);
-            var triangle = new Triangle(3, 5, 8);
+            var triangle = new Triangle(3, 5, 8,12);
 
             DelegateCalculate squareCalculate = square.GetArea;
             squareCalculate += square.GetPerimetr;
