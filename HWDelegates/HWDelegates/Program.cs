@@ -5,10 +5,42 @@ namespace HWDelegates
 {
     class Program
     {
-        public delegate string MyDelegate(Figure figure);
+        public delegate string MyDelegate(Figure figure);      
+        public static void PrintInfo(double area, double length=0)
+        {
+            if(length==0)
+            {
+                Console.WriteLine($"Area is {area}");
+            }
+            else
+            Console.WriteLine($"Area is {area}| length is {length}");
+        }        
 
         static void Main(string[] args)
         {
+            double area = default;
+            double length=default;
+
+            Action<int,int> actionCircleDlgt = delegate (int radius, int zero ) { area = Math.Round(Math.PI * Math.Pow(radius, 2), 2); };
+            actionCircleDlgt += (int radius, int zero) => { length =Math.Round ((2 * Math.PI * radius),2); };
+            Action<int, int> actionRectangleDlgt = delegate (int sideA, int sideB) { area = sideA * sideB; };
+            Action<int, int> actionTriangleDlgt = delegate (int hight, int baseF) { area = hight * baseF; };
+            Action<int, int> actionSquareDlgt = delegate (int side, int zero) { area = side * side; };
+
+
+            Dictionary<FiguresNames, Action<int, int>> simpleDictionary = new Dictionary<FiguresNames, Action<int, int>>();
+
+            simpleDictionary.Add(FiguresNames.Circle, actionCircleDlgt);
+            simpleDictionary.Add(FiguresNames.Rectangle, actionRectangleDlgt);
+            simpleDictionary.Add(FiguresNames.Triangle, actionTriangleDlgt);
+            simpleDictionary.Add(FiguresNames.Square, actionSquareDlgt);
+
+            simpleDictionary[FiguresNames.Circle](1,48);           
+            PrintInfo(area, length);
+            simpleDictionary[FiguresNames.Square](8, 0); 
+            PrintInfo(area);
+
+            //===============================================================================================================
             MyDelegate myDelegCircleArea = figure => figure.PrintInfo();//$"Area of {figure.ToString()} is {figure.GetArea()}";
             MyDelegate myDelegTriangleArea = figure => figure.PrintInfo();
             MyDelegate myDelegRectangleArea = figure => figure.PrintInfo();
