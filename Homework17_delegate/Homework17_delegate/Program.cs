@@ -1,39 +1,47 @@
-﻿using Homework17_delegate.Figure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Homework17_delegate
 {
-    public delegate void MyDelegate();
-    class Program
-    {
-        static void Main(string[] args)
+    public delegate MyDelegate DelegateFigure(MyDelegate area, MyDelegate perimeter);
+    public delegate string MyDelegate(double aParameter, double bParameter, double cParameter);
+    
+    public class Program
+    { 
+        public static void Main(string[] args)
         {
-            var figure = new Dictionary<TypeOfFigure, MyDelegate>();
+            var figure = new Dictionary<TypeOfFigure, DelegateFigure>();
 
-            var circle = new CircleFigure(5);
-            var rectangle = new RectangleFigure(2, 4);
-            var square = new SquareFigure(3);
-            var triangle = new TriangleFigure(2, 4, 5);
+            MyDelegate rectangleArea = (aSide, bSide, cParameter) => { return $"{aSide * bSide}"; };
+            MyDelegate rectanglePerimeter = (aSide, bSide, cParameter) => { return $"{(aSide + bSide) * 2}"; };
+            MyDelegate squareArea = (aSide, bParameter, cParameter) => { return $"{Math.Pow(aSide, 2)}"; };
+            MyDelegate squarePerimeter = (aSide, bParameter, cParameter) => { return $"{4 * aSide}"; };
+            MyDelegate circleArea = (radius, bParameter, cParameter) => { return $"{(Math.Pow(radius, 2) * Math.PI):F2}"; };
+            MyDelegate circlePerimeter = (radius, bParameter, cParameter) => { return $"{(2 * radius * Math.PI):F2}"; };
+            MyDelegate triangleArea = (aSide, bSide, cSide) => { return $"{Math.Sqrt(((aSide + bSide + cSide) / 2) * (((aSide + bSide + cSide) / 2) - aSide) * (((aSide + bSide + cSide) / 2) - bSide) * (((aSide + bSide + cSide) / 2) - cSide))}";};
+            MyDelegate trianglePerimeter = (aSide, bSide, cSide) => { return $"{aSide + bSide + cSide}"; };
 
-            MyDelegate rectangleArea = () => { Console.WriteLine($"Rectangle area = {rectangle.GetArea()}"); };
-            rectangleArea += () => { Console.WriteLine($"Rectangle perimeter = {rectangle.GetPerimeter()}"); };
-            MyDelegate squareArea = () => { Console.WriteLine($"Square Area = {square.GetArea()}"); };
-            squareArea += () => Console.WriteLine($"Square perimeter = {square.GetPerimeter()}");
-            MyDelegate circleArea = () => { Console.WriteLine($"Circle Area = {circle.GetArea()}"); };
-            circleArea += () => Console.WriteLine($"Circle perimeter = {circle.GetPerimeter()}");
-            MyDelegate triangleArea = () => { Console.WriteLine($"Triangle Area = {triangle.GetArea()}"); };
-            triangleArea += () => Console.WriteLine($"Triangle perimeter = {triangle.GetPerimeter()}");
 
-            figure.Add(TypeOfFigure.circle, circleArea);
-            figure.Add(TypeOfFigure.rectangle, rectangleArea);
-            figure.Add(TypeOfFigure.square, squareArea);
-            figure.Add(TypeOfFigure.triangle, triangleArea);
+            DelegateFigure rectangle =(MyDelegate rectangleArea,MyDelegate rectanglePerimeter) => (aParameter, bParameter, cParameter) => { return $"Area = {rectangleArea.Invoke(aParameter, bParameter, cParameter)} Perimeter = {rectanglePerimeter.Invoke(aParameter, bParameter, cParameter)}"; }; 
+            DelegateFigure circle = (MyDelegate circleArea, MyDelegate circlePerimeter) => (aParameter, bParameter, cParameter) => { return $"Area = {circleArea.Invoke(aParameter, bParameter, cParameter)} Perimeter = {circlePerimeter.Invoke(aParameter, bParameter, cParameter)}"; };
+            DelegateFigure triangle = (MyDelegate triangleArea, MyDelegate trianglePerimeter) => (aParameter, bParameter, cParameter) => { return $"Area = {triangleArea.Invoke(aParameter, bParameter, cParameter)} Perimeter = {trianglePerimeter.Invoke(aParameter, bParameter, cParameter)}"; };
+            DelegateFigure square = (MyDelegate squareArea, MyDelegate squarePerimeter) => (aParameter, bParameter, cParameter) => { return $"Area = {squareArea.Invoke(aParameter, bParameter, cParameter)} Perimeter = {squarePerimeter.Invoke(aParameter, bParameter, cParameter)}"; };
 
-            figure[TypeOfFigure.circle]();
-            figure[TypeOfFigure.rectangle]();
-            figure[TypeOfFigure.square]();
-            figure[TypeOfFigure.triangle]();
+
+            figure.Add(TypeOfFigure.circle, circle);
+            figure.Add(TypeOfFigure.rectangle, rectangle);
+            figure.Add(TypeOfFigure.square, square);
+            figure.Add(TypeOfFigure.triangle, triangle);
+
+            figure[TypeOfFigure.circle].Invoke(circleArea, circlePerimeter);
+            figure[TypeOfFigure.rectangle].Invoke(rectangleArea, rectanglePerimeter);
+            figure[TypeOfFigure.square].Invoke(squareArea, squarePerimeter);
+            figure[TypeOfFigure.triangle].Invoke(triangleArea, trianglePerimeter);
+
+            Console.WriteLine($"Rectangle: {figure[TypeOfFigure.rectangle].Invoke(rectangleArea, rectanglePerimeter).Invoke(3,4,0)}");
+            Console.WriteLine($"Circle: {figure[TypeOfFigure.circle].Invoke(circleArea, circlePerimeter).Invoke(5, 0, 0)}");
+            Console.WriteLine($"Square: {figure[TypeOfFigure.square].Invoke(squareArea, squarePerimeter).Invoke(3, 0, 0)}");
+            Console.WriteLine($"Triangle: {figure[TypeOfFigure.triangle].Invoke(triangleArea, trianglePerimeter).Invoke(3, 4, 5)}");
 
             Console.ReadKey();
         }
